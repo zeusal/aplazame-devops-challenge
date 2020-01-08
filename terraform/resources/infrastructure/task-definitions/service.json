@@ -1,0 +1,15 @@
+[
+    {
+      "name": "nginx_aplazame",
+      "image": "640057356796.dkr.ecr.eu-west-1.amazonaws.com/aplazame:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp",
+          "hostPort": 80
+        }
+      ],
+      "cpu": 0
+    }
+  ]

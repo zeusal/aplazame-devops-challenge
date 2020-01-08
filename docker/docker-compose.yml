@@ -1,0 +1,17 @@
+version: "3"
+services:
+  aplazame-service:
+    image: nginx:latest
+    volumes:
+      - ./opt/nginx/conf.d:/etc/nginx/conf.d
+      - ./opt/nginx/www:/usr/share/nginx/html/status
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8080:80"
+    networks:
+      - webnet
+networks:
+   webnet:
