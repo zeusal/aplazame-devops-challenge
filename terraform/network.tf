@@ -1,13 +1,23 @@
+/*
+  SG from all to 40 and 443 
+*/
 resource "aws_security_group" "alb_external" {
   name        = "alb-ext-${var.project}-${var.environment}"
-  description = "Allow port 80 inbound traffic"
+  description = "Allow 80 and 443 port inbound traffic"
   vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port = 80
     to_port   = 80
     protocol  = "tcp"
-    cidr_blocks = ["83.43.167.106/32"]
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -23,6 +33,9 @@ resource "aws_security_group" "alb_external" {
   }
 }
 
+/*
+  SG from self SG to all port
+*/
 resource "aws_security_group" "allow_internal" {
   name        = "all-int-${var.project}-${var.environment}"
   description = "Allow all port inbound traffic"
