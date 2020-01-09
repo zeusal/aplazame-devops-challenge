@@ -14,7 +14,7 @@ resource "aws_launch_configuration" "ecs_launch_configuration" {
 
   root_block_device {
     volume_type           = "standard"
-    volume_size           = 30
+    volume_size           = "${var.volume_size}"
     delete_on_termination = true
   }
 
@@ -27,7 +27,7 @@ resource "aws_launch_configuration" "ecs_launch_configuration" {
   key_name                    = "${aws_key_pair.deployer.key_name}"
   user_data                   = <<-EOF
     #!/bin/bash
-    echo ECS_CLUSTER=${var.project}-${terraform.workspace} >> /etc/ecs/ecs.config
+    echo ECS_CLUSTER=ecs-${var.project}-${terraform.workspace} >> /etc/ecs/ecs.config
   EOF
 }
 
@@ -42,11 +42,16 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
   depends_on           = [aws_launch_configuration.ecs_launch_configuration]
 
   tags = [{
+    "key"               = "Name" 
+    "value"             = "asg-${var.resource_prefix}-${terraform.workspace}"
+    propagate_at_launch = true
+
+    
+  },{
     "key"               = "Project" 
     "value"             = "${var.project}"
     propagate_at_launch = true
 
-    
   },{
     "key"               = "Environment" 
     "value"             = "${terraform.workspace}"
@@ -60,7 +65,7 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
   ECS Definition
 */
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "${var.project}-${terraform.workspace}"
+  name = "ecs-${var.project}-${terraform.workspace}"
 
   tags = {
     Name        = "${var.resource_prefix}-${terraform.workspace}"
@@ -83,6 +88,7 @@ resource "aws_ecs_task_definition" "nginx" {
   depends_on            = [aws_ecs_cluster.ecs_cluster]
 
   tags = {
+    Name        = "nginx-task-${var.resource_prefix}-${terraform.workspace}"
     Project     = "${var.project}",
     Environment = "${terraform.workspace}"
   }

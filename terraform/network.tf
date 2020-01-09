@@ -2,7 +2,7 @@
   SG from all to 40 and 443 
 */
 resource "aws_security_group" "alb_external" {
-  name        = "alb-ext-${var.project}-${var.environment}"
+  name        = "alb-ext-${var.project}-${terraform.workspace}"
   description = "Allow 80 and 443 port inbound traffic"
   vpc_id      = "${aws_vpc.default.id}"
 
@@ -27,9 +27,9 @@ resource "aws_security_group" "alb_external" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name        = "alb-ext-${var.project}-${var.environment}",
+    Name        = "alb-ext-${var.project}-${terraform.workspace}",
     Project     = "${var.project}",
-    Environment = "${var.environment}"
+    Environment = "${terraform.workspace}"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_security_group" "alb_external" {
   SG from self SG to all port
 */
 resource "aws_security_group" "allow_internal" {
-  name        = "all-int-${var.project}-${var.environment}"
+  name        = "all-int-${var.project}-${terraform.workspace}"
   description = "Allow all port inbound traffic"
   vpc_id      = "${aws_vpc.default.id}"
 
@@ -55,8 +55,8 @@ resource "aws_security_group" "allow_internal" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name        = "all-int-${var.project}-${var.environment}",
+    Name        = "all-int-${var.project}-${terraform.workspace}",
     Project     = "${var.project}",
-    Environment = "${var.environment}"
+    Environment = "${terraform.workspace}"
   }
 }
